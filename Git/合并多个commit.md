@@ -6,7 +6,7 @@
 
 `$ git log`
 
-<img width='400px' src='../public/img/Screen Shot 2016-11-24 at 4.50.28 PM.png'>
+<img width='400px' src='../public/img/Screen Shot 2016-11-24 at 4.50.28 PM.jpg'>
 
 <br>
 `$ git rebase -i cd98edc81b14946d26273e5c3f85b8c667ab1262`
@@ -15,18 +15,18 @@
 
 > squash 或 fixup：这次commit会被合并到前面的commit（两者区别在于commit message是否保留）
 
-<img width='500px' src='../public/img/Screen Shot 2016-11-24 at 5.05.54 PM.png'>
+<img width='500px' src='../public/img/Screen Shot 2016-11-24 at 5.05.54 PM.jpg'>
 
 <br>
 `:wq 保存退出vi`
 
 还有机会修改commit message
 
-<img width='600px' src='../public/img/Screen Shot 2016-11-24 at 5.12.46 PM.png'>
+<img width='600px' src='../public/img/Screen Shot 2016-11-24 at 5.12.46 PM.jpg'>
 
 修改message为"bug fixes"
 
-<img width='600px' src='../public/img/Screen Shot 2016-11-24 at 5.16.10 PM.png'>
+<img width='600px' src='../public/img/Screen Shot 2016-11-24 at 5.16.10 PM.jpg'>
 
 `:wq 保存退出vi`
 
