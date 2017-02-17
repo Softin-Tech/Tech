@@ -394,10 +394,9 @@ dispatch_async(sessionQueue) { () -> Void in
 GPUImage 是一个 iOS 开源库, 可以给图片,视频,相机添加滤镜和一些其他的效果
 
 ## 原理
+![](../public/img/Screen Shot 2017-02-17 at 3.26.25 PM.png)
 
-<img height='400px' src='../public/img/Camera3.svg'>
-
-GPUIImage 的原理是管道渲染, Source 是相机的输入,本地图片或者远程图片. Filter Chain 会对 Source 进行一系列的图片处理, 最后输出到 view, graphics context 或 data stream上
+GPUIImage 的原理是管道渲染, Source 是相机的输入,本地图片或者远程图片. Filter Chain 会对 Source 进行一系列的图像处理, 最后输出
 
 
 ## 实时滤镜
