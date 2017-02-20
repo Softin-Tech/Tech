@@ -16,7 +16,7 @@ fastlane deliver init
 
 上传metadata和截图需要准备metadata和screenshots目录,目录如下
 
-![](https://github.com/Flowever/Tech/raw/master/public/img/Screen Shot 2017-02-20 at 11.12.28 AM.png)
+![](../public/img/Screen Shot 2017-02-20 at 11.12.28 AM.png)
 
 支持的语言列表
 
