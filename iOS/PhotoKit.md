@@ -2,15 +2,17 @@
 
 `PhotoKit` 是 iOS 8 引入的库
 
-PhotoKit 所有PhotoKit对象都继承PHObject抽象类。
+PhotoKit 中的所有 PhotoKit 对象都继承 `PHObject` 抽象类。
 
-- PHAsset: 代表用户照片库中一个单独的资源
-- PHFetchOptions: 获取资源时的参数，可以传 nil，即使用系统默认值
-- PHAssetCollection: 代表一个资源集合。一个单独的资源集合可以是照片库中的一个相册。PHAssetCollection 是 PHCollection 的子类。
-- PHCollectionList: 表示一组的 PHCollections。集合列表可以包含其他集合列表。在系统的照片应用中：照片---时刻---精选---年度，就是一个例子
-- PHFetchResult: 表示一系列的资源结果集合，也可以是相册的集合，从 PHCollection 的类方法中获得
-- PHImageManager: 用于处理资源的加载，加载图片的过程带有缓存处理，可以通过传入一个PHImageRequestOptions 控制资源的输出尺寸等规格
-- PHImageRequestOptions: 控制加载图片时的一系列参数
+- `PHAsset`: 代表用户照片库中一个单独的资源
+- `PHFetchOptions`: 获取资源时的参数，可以传 nil，即使用系统默认值
+- `PHAssetCollection`: 代表一个资源集合。一个 `PHAssetCollection` 代表照片库中的一个相册。`PHAssetCollection` 是 `PHCollection` 的子类。
+- `PHCollectionList`: 表示一组 PHCollections。可以嵌套 `PHCollectionList` 和自身类型，还支持多重嵌套。在系统的照片应用中：照片---时刻---精选---年度，就是一个例子
+- `PHFetchResult`: 表示一系列的资源结果集合，也可以是相册的集合，从 `PHCollection` 的类方法中获得
+- `PHImageManager`: 用于处理资源的加载，加载图片的过程带有缓存处理，可以通过传入一个 `PHImageRequestOptions` 控制资源的输出尺寸等规格
+- `PHImageRequestOptions`: 控制加载图片时的一系列参数
+
+`PHAsset`、`PHAssetCollection` 和 `PHCollectionList` 都是轻量级的不可变对象，使用这些类时并没有将其代表的图片、视频或者集合载入内存中，要使用其代表的图片或者视频，需要通过 `PHImageManager` 类来请求。
 
 ## 权限获取
 ```Swift
@@ -37,21 +39,23 @@ switch currentStatus {
 
 ```Swift
 
+	//options 参数给了我们一个对结果进行过滤和排序的途径。  
    //这里按照估计的每个相册的照片数排序
-   let options = PHFetchOptions()
-   let descriptor = NSSortDescriptor(key: "estimatedAssetCount", ascending: false)
+     let options = PHFetchOptions()
+     let descriptor = NSSortDescriptor(key: "estimatedAssetCount", ascending: false)
    options.sortDescriptors = [descriptor]
 
 	//获取系统相册的方法:  
-	PHAssetCollection.fetchAssetCollections(with: .smartAlbum,
- 							subtype: .albumRegular, options: options)
+     let systemAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: options)
+        
 	//获取用户创建的相册的方法:  
-	PHAssetCollection.fetchTopLevelUserCollections(with: options)`  
+     let userAlbums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: options)
+     let userAlbums = PHAssetCollection.fetchTopLevelUserCollections(with: nil)
 	
 	//获取所有资源的集合
-	let assetsFetchResults  = PHAsset.fetchAssetsWithOptions(nil)
+  	  let assetsFetchResults  = PHAsset.fetchAssetsWithOptions(nil)
 	
-	//options 参数给了我们一个对结果进行过滤和排序的途径。  
+	
 ```
 
 两种方法的返回值都是 `PHFetchResult`，可以用类似 NSArray 的接口来访问结果内的集合
@@ -65,7 +69,7 @@ enum PHAssetCollectionType : Int {
 }
 
 enum PHAssetCollectionSubtype : Int {
-    case AlbumRegular //用户在 Photos 中创建的相册，也就是我所谓的逻辑相册
+    case AlbumRegular //用户在 Photos 中创建的相册，也就是所谓的逻辑相册
     case AlbumSyncedEvent //使用 iTunes 从 Photos 照片库或者 iPhoto 照片库同步过来的事件。然而，在iTunes 12 以及iOS 9.0 beta4上，选用该类型没法获取同步的事件相册，而必须使用AlbumSyncedAlbum。
     case AlbumSyncedFaces //使用 iTunes 从 Photos 照片库或者 iPhoto 照片库同步的人物相册。
     case AlbumSyncedAlbum //做了 AlbumSyncedEvent 应该做的事
@@ -89,7 +93,7 @@ enum PHAssetCollectionSubtype : Int {
 
 ## 获取图片的元数据
 
-上面获取的是相册的列表集合，现在从列表中取出每个图片的元数据，利用 PHAsset 的类方法获取图片元数据
+上面获取的是相册的列表，现在从列表中取出每个图片的元数据，利用 `PHAsset` 的类方法获取图片元数据
 
 ```Swift
 
@@ -109,7 +113,7 @@ enum PHAssetCollectionSubtype : Int {
 ## 图片元数据
 
 #### Asset 类型
-通过 `mediaType` 可以可以知道 asset 的是图片还是视频
+通过 `mediaType` 可以知道这个 asset 类型
 
 - image
 - video
@@ -149,8 +153,8 @@ Photokit 提供了一个类： `PHImageManager`。
 
  这个方法接受的参数:
 
-- 一个 `PHAsset`。
-- `CGSize`，设置图片的大小。
+- `PHAsset`。
+- `CGSize`，希望获取的图片大小。
 - `contentMode`
 - 和图片的其他可选项（通过 `PHImageRequestOptions` 参数对象设置）
 - 获得 UIImage 后的回调
@@ -163,15 +167,24 @@ Photokit 提供了一个类： `PHImageManager`。
 `targetSize` 和 `contentMode` 这两个参数决定了图片是按比例缩放，还是按比例填充的方式放到目标大小内。  
 需要返回原图时这两个参数是：`PHImageManagerMaximumSize` 和 `PHImageContentMode.Default`。
 
-#### 请求的速度
+#### PHImageRequestOptions
 `PHImageRequestOptions` 的 `deliveryMode` 可以设置三种策略:
 
 - Opportunistic：先传递较低质量的版本，随后传递高质量的，可能调用多次回调。
 - HighQualityFormat：高质量的图片，较长的加载时间
 - FastFormat：更快的加载速度，且牺牲一点图片质量
 
+`isNetworkAccessAllowed` 是否允许从 iCloud 下载图片，默认是 `NO`
+
+`isSynchronous`  设置是否同步。当设为 `true` 时， `deliveryMode` 属性就会被忽略，并被当做 `. HighQualityFormat` 处理。 `isSynchronous` 默认为 `NO`。
+
+`progressHandler` 下载进度的一个 block，当从 iCloud 下载照片时，它会被图像管理器自动调用。
+
+`version` 
+PhotoKit 允许应用对照片进行无损的修改。对编辑过的照片，系统会对单独保存一份原始照片的拷贝和针对应用的调整数据。当用图像管理器获取资源时，你可以指定哪个版本的图像资源应该通过 `resultHandler` 被递送。这可以通过设置 `version` 属性来做到：`.Current` 会递送包含所有调整和修改的图像；`.Unadjusted` 会递送未被施加任何修改的图像；`.Original` 会递送原始的、最高质量的格式的图像 (例如 RAW 格式的数据。而当将属性设置为 `.Unadjusted` 时，会递送一个 JPEG)。
+
 #### 结果回调
-回调是block，包含一个 `UIImage` 变量和一个 `info` 字典。根据请求的参数，有可能被多次调用。  
+回调是一个block，包含一个 `UIImage` 变量和一个 `info` 字典。根据请求的参数，block 有可能被多次调用。  
 `info` 字典提供了关于当前请求状态的信息，比如:
 
 - 图像是否必须从 iCloud 请求 (如果你初始化时将 networkAccessAllowed 设置成 false，那么就必须重新请求图像) —— PHImageResultIsInCloudKey 。
